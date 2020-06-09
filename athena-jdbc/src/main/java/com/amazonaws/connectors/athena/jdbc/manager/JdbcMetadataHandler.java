@@ -224,6 +224,8 @@ public abstract class JdbcMetadataHandler
     private Schema getSchema(Connection jdbcConnection, TableName tableName, Schema partitionSchema)
             throws SQLException
     {
+        LOGGER.info("getSchema " + String.valueOf(jdbcConnection.getCatalog()) + " " + tableName);
+
         SchemaBuilder schemaBuilder = SchemaBuilder.newBuilder();
 
         try (ResultSet resultSet = getColumns(jdbcConnection.getCatalog(), tableName, jdbcConnection.getMetaData())) {
@@ -234,6 +236,7 @@ public abstract class JdbcMetadataHandler
                         resultSet.getInt("COLUMN_SIZE"),
                         resultSet.getInt("DECIMAL_DIGITS"));
                 String columnName = resultSet.getString("COLUMN_NAME");
+                LOGGER.info("columnName " + columnName + " columnType=" + columnType);
                 if (columnType != null && SupportedTypes.isSupported(columnType)) {
                     schemaBuilder.addField(FieldBuilder.newBuilder(columnName, columnType).build());
                     found = true;
